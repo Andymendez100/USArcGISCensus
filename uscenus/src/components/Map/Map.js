@@ -35,9 +35,9 @@ var countiesRenderer = {
   },
 }
 
-var CongressionalRenderer = {
+var congressionalRenderer = {
   type: "simple",  // autocasts as new SimpleRenderer()
-  size: 2,
+  size: 4,
   symbol: {
     type: "simple-line",
     color:
@@ -57,10 +57,10 @@ function ArcMap() {
         'esri/Map',
         'esri/views/MapView',
         'esri/layers/GeoJSONLayer',
-        'esri/geometry/Polyline'
+        'esri/views/layers/LayerView'
       ],
       { css: true }
-    ).then(([ArcGISMap, MapView, GeoJSONLayer]) => {
+    ).then(([ArcGISMap, MapView, GeoJSONLayer, LayerView]) => {
       const map = new ArcGISMap({
         basemap: 'gray-vector'
       });
@@ -82,7 +82,7 @@ function ArcMap() {
 
       const USCongressional = new GeoJSONLayer({
         url: US_Congressional,
-        renderer: CongressionalRenderer
+        renderer: congressionalRenderer
       });
 
       map.add(USCongressional);
@@ -90,6 +90,10 @@ function ArcMap() {
       map.add(USStates)
       map.add(USOutline);
 
+      document.getElementById('outline').onclick = () => USOutline.visible = !USOutline.visible;
+      document.getElementById('states').onclick = () => USStates.visible = !USStates.visible;
+      document.getElementById('counties').onclick = () => USCounties.visible = !USCounties.visible;
+      document.getElementById('congressional').onclick = () => USCongressional.visible = !USCongressional.visible;
 
       // adds the layer to the map
       // load the map view at the ref's DOM node
@@ -109,6 +113,15 @@ function ArcMap() {
     });
 
   });
-  return <div className="webmap" ref={mapRef} />;
+  return (
+    <div>
+      <h2>My Map</h2>
+      <button id="outline">Toggle US OutLine</button>
+      <button id="states">Toggle US States</button>
+      <button id="counties">Toggle US Counties</button>
+      <button id="congressional">Toggle US congressional</button>
+      <div className="webmap" ref={mapRef} />;
+    </div>
+  )
 }
 export default ArcMap;
