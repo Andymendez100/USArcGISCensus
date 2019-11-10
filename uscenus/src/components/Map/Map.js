@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { loadModules } from 'esri-loader';
 import './Map.css';
-import US_Outline from './US_Outline.json';
+import US_Outline from './US_Outline.geojson';
+import US_States from './US_States.geojson'
 
 function ArcMap() {
   const mapRef = useRef();
@@ -22,15 +23,14 @@ function ArcMap() {
           basemap: 'topo-vector'
         });
 
-        console.log('test', US_Outline);
-
-        const geoJSONLayer = new GeoJSONLayer({
-          url: 'http://localhost:3000/gz_2010_us_outline_20m.json'
-          // popupTemplate: template
-          // copyright: 'USGS Earthquakes'
+        const USOutline = new GeoJSONLayer({
+          url: US_Outline
         });
-        console.log(geoJSONLayer);
-        map.add(geoJSONLayer);
+        const USStates = new GeoJSONLayer({
+          url: US_States
+        });
+        map.add(USOutline);
+        map.add(USStates);
 
         // adds the layer to the map
         // load the map view at the ref's DOM node
