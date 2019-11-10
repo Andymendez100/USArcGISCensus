@@ -8,46 +8,47 @@ function ArcMap() {
 
   useEffect(() => {
     // lazy load the required ArcGIS API for JavaScript modules and CSS
-    loadModules(
-      ['esri/Map', 'esri/views/MapView', 'esri/layers/GeoJSONLayer'],
-      { css: true }
-    ).then(([ArcGISMap, MapView, GeoJSONLayer]) => {
-      const map = new ArcGISMap({
-        basemap: 'topo-vector'
+    if (US_Outline) {
+      loadModules(
+        [
+          'esri/Map',
+          'esri/views/MapView',
+          'esri/layers/GeoJSONLayer',
+          'esri/geometry/Polyline'
+        ],
+        { css: true }
+      ).then(([ArcGISMap, MapView, GeoJSONLayer]) => {
+        const map = new ArcGISMap({
+          basemap: 'topo-vector'
+        });
+
+        console.log('test', US_Outline);
+
+        const geoJSONLayer = new GeoJSONLayer({
+          url: 'http://localhost:3000/gz_2010_us_outline_20m.json'
+          // popupTemplate: template
+          // copyright: 'USGS Earthquakes'
+        });
+        console.log(geoJSONLayer);
+        map.add(geoJSONLayer);
+
+        // adds the layer to the map
+        // load the map view at the ref's DOM node
+        const view = new MapView({
+          container: mapRef.current,
+          map: map,
+          center: [-118, 34],
+          zoom: 8
+        });
+
+        return () => {
+          if (view) {
+            // destroy the map view
+            view.container = null;
+          }
+        };
       });
-
-      console.log(US_Outline);
-      //   const geoJSONLayer = new GeoJSONLayer({
-      //     // data: US_Outline
-      //     url:
-      //       'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson',
-      //     copyright: 'USGS Earthquakes'
-      //   });
-      //   console.log(geoJSONLayer);
-
-      //   map.add(geoJSONLayer); // adds the layer to the map
-
-      const geoJSONLayer = new GeoJSONLayer({
-        url:
-          'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson',
-        copyright: 'USGS Earthquakes'
-      });
-      map.add(geoJSONLayer); // adds the layer to the map
-      // load the map view at the ref's DOM node
-      const view = new MapView({
-        container: mapRef.current,
-        map: map,
-        center: [-118, 34],
-        zoom: 8
-      });
-
-      return () => {
-        if (view) {
-          // destroy the map view
-          view.container = null;
-        }
-      };
-    });
+    }
   });
   return <div className="webmap" ref={mapRef} />;
 }
