@@ -1,114 +1,26 @@
 import React, { useEffect, useRef } from 'react';
+
+// ArcGIS Layers
 import { loadModules } from 'esri-loader';
+
 import './Map.css';
-import US_Outline from './US_Outline.geojson';
-import US_States from './US_States.geojson';
-import US_Counties from './US_Counties.geojson';
-import US_Congressional from './US_Congressional.geojson';
-import axios from 'axios';
+// Json Data
+import US_Outline from '../../data/US_Outline.geojson';
+import US_States from '../../data/US_States.geojson';
+import US_Counties from '../../data/US_Counties.geojson';
+import US_Congressional from '../../data/US_Congressional.geojson';
 
-const outlineRenderer = {
-  type: "simple",  // autocasts as new SimpleRenderer()
-  size: 3,
-  symbol: {
-    type: "simple-line",
-    color: 'rgba(43, 45, 66, 0.9)'
-  },
-}
+// Layer styling
+import { outlineRenderer, stateRenderer, congressionalRenderer, countiesRenderer, } from './layerStyles';
 
-const stateRenderer = {
-  type: "simple",  // autocasts as new SimpleRenderer()
-  size: 4,
-  symbol: {
-    type: "simple-fill",
-    color:
-      'rgb(141,153,174 )'
-  },
-}
-
-const countiesRenderer = {
-  type: "simple",  // autocasts as new SimpleRenderer()
-  size: 1,
-  symbol: {
-    type: "simple-line",
-    color:
-      'rgba(239,35,60, 0.3)'
-  },
-}
-
-const congressionalRenderer = {
-  type: "simple",  // autocasts as new SimpleRenderer()
-  size: 4,
-  symbol: {
-    type: "simple-line",
-    color:
-      'rgba(217,4,41, 0.7)'
-  },
-}
+// utili to populated the popup
+import statePopup from '../../utils/languagePopup'
 
 
-
-var statePopup = {
-
-  "id": "{STATE}",
-  "title": "{NAME}",
-  "content": async function (event) {
-    const { STATE } = event.graphic.attributes;
-
-    /**
-     * Retrieves data for selected state - returns object with language categories by state [estimate, label, state]
-     * Return is of type promise 
-     */
-    const selectedStateCategories = axios.get(`https://api.census.gov/data/2013/language?get=EST,LANLABEL,NAME&for=state:${STATE}&LAN7&key=f25fc11700bcf786378aa57f5ac9c5d26bb0bea6`)
-      .then(resp => {
-        const arr = resp.data.slice(1);
-
-        if (arr) {
-          return arr.map(category => ({
-            estimate: category[0],
-            label: category[1],
-            state: category[2],
-          }))
-        }
-      });
-
-    // use selectedState as a promise (returns all language categories)
-    const selectedStateLanguages = axios.get(`https://api.census.gov/data/2013/language?get=EST,LANLABEL,NAME&for=state:${STATE}&LAN&key=f25fc11700bcf786378aa57f5ac9c5d26bb0bea6`)
-      .then(resp => {
-        const data = resp.data.slice(1);
-
-        if (data) {
-          return data
-            .sort((a, b, ) => b[0] - a[0])
-            .slice(0, 6)
-            .map(lang => ({
-              estimate: lang[0],
-              name: lang[1],
-              code: lang[3]
-            }));
-        }
-      });
-
-    const categories = await selectedStateCategories;
-    const languages = await selectedStateLanguages;
-
-    if (categories && languages) {
-      return "<p align='left'><strong>Language Categories</strong> </br>" +
-        categories.map(category => `<strong>${category.label}: </strong> ${category.estimate} </br> `).join("") + "</p>" +
-        "<p align='left'><strong>Top Spoken Languages (excluding English) </strong> </br>" +
-        languages.map(language => `<strong>${language.name}: </strong> ${language.estimate} </br> `).join("") + "</p>"
-    }
-
-
-  }
-
-}
-
-
-function ArcMap() {
+const ArcMap = () => {
   const mapRef = useRef();
 
-  useEffect(() => { //dafuq are you doing mang??
+  useEffect(() => {
     // lazy load the required ArcGIS API for JavaScript modules and CSS
 
     loadModules(
@@ -125,10 +37,16 @@ function ArcMap() {
         basemap: 'gray-vector'
       });
 
-      const USOutline = new GeoJSONLayer({
-        url: US_Outline,
-        renderer: outlineRenderer
-      });
+      const generateGeoJSONLayer = (data, render) => {
+        return new GeoJSONLayer({
+          url: data,
+          renderer: render
+        });
+      }
+
+      const USOutline = generateGeoJSONLayer(US_Outline, outlineRenderer);
+      const USCounties = generateGeoJSONLayer(US_Counties, countiesRenderer)
+      const USCongressional = generateGeoJSONLayer(US_Congressional, congressionalRenderer);
 
       const USStates = new GeoJSONLayer({
         url: US_States,
@@ -137,18 +55,8 @@ function ArcMap() {
         popupTemplate: statePopup
       });
 
-      const USCounties = new GeoJSONLayer({
-        url: US_Counties,
-        renderer: countiesRenderer
-      });
-
-      const USCongressional = new GeoJSONLayer({
-        url: US_Congressional,
-        renderer: congressionalRenderer
-      });
-
-      map.add(USStates)
       map.add(USCongressional);
+      map.add(USStates);
       map.add(USCounties);
       map.add(USOutline);
 
@@ -164,7 +72,7 @@ function ArcMap() {
         container: mapRef.current,
         map: map,
         center: [-95, 40],
-        zoom: 3
+        zoom: 2
       });
 
       return () => {
@@ -178,12 +86,12 @@ function ArcMap() {
   });
   return (
     <div>
-      <h2>My Map</h2>
+      <h2>U.S 2013 Census Map</h2>
       <button id="outline">Toggle US OutLine</button>
       <button id="states">Toggle US States</button>
       <button id="counties">Toggle US Counties</button>
       <button id="congressional">Toggle US congressional</button>
-      <div className="webmap" ref={mapRef} />;
+      <div className="webmap" ref={mapRef} />
     </div>
   )
 }

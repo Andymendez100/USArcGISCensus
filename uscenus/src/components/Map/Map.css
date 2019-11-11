@@ -1,3 +1,32 @@
 .webmap {
-  height: 400px;
+  height: 600px;
+  width: 100%;
+}
+
+.esri-popup__navigation {
+  display: none;
+}
+#outline {
+  padding: 10px;
+  background-color: rgba(43, 45, 66);
+  border: none;
+  color: whitesmoke;
+}
+#states {
+  padding: 10px;
+  background-color: rgb(141, 153, 174);
+  border: none;
+  color: whitesmoke;
+}
+#counties {
+  padding: 10px;
+  background-color: rgb(239, 35, 60);
+  border: none;
+  color: whitesmoke;
+}
+#congressional {
+  padding: 10px;
+  background-color: rgb(0, 0, 102);
+  border: none;
+  color: whitesmoke;
 }
