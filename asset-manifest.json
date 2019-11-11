@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/USArcGISCensus/static/css/main.82e95e78.chunk.css",
+    "main.js": "/USArcGISCensus/static/js/main.e08c593e.chunk.js",
+    "main.js.map": "/USArcGISCensus/static/js/main.e08c593e.chunk.js.map",
+    "runtime-main.js": "/USArcGISCensus/static/js/runtime-main.c24607d3.js",
+    "runtime-main.js.map": "/USArcGISCensus/static/js/runtime-main.c24607d3.js.map",
+    "static/js/2.bfef4a04.chunk.js": "/USArcGISCensus/static/js/2.bfef4a04.chunk.js",
+    "static/js/2.bfef4a04.chunk.js.map": "/USArcGISCensus/static/js/2.bfef4a04.chunk.js.map",
+    "index.html": "/USArcGISCensus/index.html",
+    "precache-manifest.cb135cdd5562fa461a1fc89edfc473ae.js": "/USArcGISCensus/precache-manifest.cb135cdd5562fa461a1fc89edfc473ae.js",
+    "service-worker.js": "/USArcGISCensus/service-worker.js",
+    "static/css/main.82e95e78.chunk.css.map": "/USArcGISCensus/static/css/main.82e95e78.chunk.css.map",
+    "static/media/US_Congressional.geojson": "/USArcGISCensus/static/media/US_Congressional.a0795b65.geojson",
+    "static/media/US_Counties.geojson": "/USArcGISCensus/static/media/US_Counties.b20301c6.geojson",
+    "static/media/US_Outline.geojson": "/USArcGISCensus/static/media/US_Outline.17fc7697.geojson",
+    "static/media/US_States.geojson": "/USArcGISCensus/static/media/US_States.8ec14844.geojson"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.c24607d3.js",
+    "static/js/2.bfef4a04.chunk.js",
+    "static/css/main.82e95e78.chunk.css",
+    "static/js/main.e08c593e.chunk.js"
+  ]
+}
