@@ -5,8 +5,9 @@ import US_Outline from './US_Outline.geojson';
 import US_States from './US_States.geojson';
 import US_Counties from './US_Counties.geojson';
 import US_Congressional from './US_Congressional.geojson';
+import axios from 'axios';
 
-var outlineRenderer = {
+const outlineRenderer = {
   type: "simple",  // autocasts as new SimpleRenderer()
   size: 3,
   symbol: {
@@ -15,17 +16,17 @@ var outlineRenderer = {
   },
 }
 
-var stateRenderer = {
+const stateRenderer = {
   type: "simple",  // autocasts as new SimpleRenderer()
   size: 4,
   symbol: {
-    type: "simple-line",
+    type: "simple-fill",
     color:
       'rgb(141,153,174 )'
   },
 }
 
-var countiesRenderer = {
+const countiesRenderer = {
   type: "simple",  // autocasts as new SimpleRenderer()
   size: 1,
   symbol: {
@@ -35,7 +36,7 @@ var countiesRenderer = {
   },
 }
 
-var congressionalRenderer = {
+const congressionalRenderer = {
   type: "simple",  // autocasts as new SimpleRenderer()
   size: 4,
   symbol: {
@@ -43,6 +44,96 @@ var congressionalRenderer = {
     color:
       'rgba(217,4,41, 0.7)'
   },
+}
+
+
+
+var statePopup = {
+
+  "id": "{STATE}",
+  "title": "{NAME}",
+  "content": async function (event) {
+    const { STATE } = event.graphic.attributes;
+
+    /**
+     * Retrieves data for selected state - returns object with language categories by state [estimate, label, state]
+     * Return is of type promise 
+     */
+    const selectedStateCategories = axios.get(`https://api.census.gov/data/2013/language?get=EST,LANLABEL,NAME&for=state:${STATE}&LAN7&key=f25fc11700bcf786378aa57f5ac9c5d26bb0bea6`)
+      .then(resp => {
+        const arr = resp.data.slice(1);
+
+        return arr.map(category => ({
+          estimate: category[0],
+          label: category[1],
+          state: category[2],
+        }))
+      });
+
+    // use selectedState as a promise (returns all language categories)
+    const selectedStateLanguages = axios.get(`https://api.census.gov/data/2013/language?get=EST,LANLABEL,NAME&for=state:${STATE}&LAN&key=f25fc11700bcf786378aa57f5ac9c5d26bb0bea6`)
+      .then(resp => {
+        const data = resp.data.slice(1);
+
+        return data
+          .sort((a, b, ) => b[0] - a[0])
+          .slice(0, 6)
+          .map(lang => ({
+            estimate: lang[0],
+            name: lang[1],
+            code: lang[3]
+          }));
+      });
+
+      
+      console.log(await selectedStateLanguages);
+      console.log(await selectedStateCategories); //includes labels 
+
+    return [{
+      "type": "fields",
+      "fieldInfos": [
+        {
+          "fieldName": "AGNCY_NAME",
+          "label": "Agency",
+          "isEditable": true,
+          "tooltip": "",
+          "visible": true,
+          "format": null,
+          "stringFieldOption": "text-box"
+        },
+        {
+          "fieldName": "TYPE",
+          "label": "Type",
+          "isEditable": true,
+          "tooltip": "",
+          "visible": true,
+          "format": null,
+          "stringFieldOption": "text-box"
+        },
+        {
+          "fieldName": "ACCESS_TYP",
+          "label": "Access",
+          "isEditable": true,
+          "tooltip": "",
+          "visible": true,
+          "format": null,
+          "stringFieldOption": "text-box"
+        },
+        {
+          "fieldName": "GIS_ACRES",
+          "label": "Acres",
+          "isEditable": true,
+          "tooltip": "",
+          "visible": true,
+          "format": {
+            "places": 2,
+            "digitSeparator": true
+          },
+          "stringFieldOption": "text-box"
+        }
+      ]
+    }];
+  }
 }
 
 
@@ -57,10 +148,11 @@ function ArcMap() {
         'esri/Map',
         'esri/views/MapView',
         'esri/layers/GeoJSONLayer',
-        'esri/views/layers/LayerView'
       ],
       { css: true }
-    ).then(([ArcGISMap, MapView, GeoJSONLayer, LayerView]) => {
+    ).then(([ArcGISMap, MapView, GeoJSONLayer]) => {
+
+
       const map = new ArcGISMap({
         basemap: 'gray-vector'
       });
@@ -72,7 +164,9 @@ function ArcMap() {
 
       const USStates = new GeoJSONLayer({
         url: US_States,
-        renderer: stateRenderer
+        renderer: stateRenderer,
+        outFields: ['NAME', 'STATE'],
+        popupTemplate: statePopup
       });
 
       const USCounties = new GeoJSONLayer({
@@ -85,9 +179,9 @@ function ArcMap() {
         renderer: congressionalRenderer
       });
 
+      map.add(USStates)
       map.add(USCongressional);
       map.add(USCounties);
-      map.add(USStates)
       map.add(USOutline);
 
       document.getElementById('outline').onclick = () => USOutline.visible = !USOutline.visible;
@@ -97,10 +191,11 @@ function ArcMap() {
 
       // adds the layer to the map
       // load the map view at the ref's DOM node
+
       const view = new MapView({
         container: mapRef.current,
         map: map,
-        center: [-118, 34],
+        center: [-95, 40],
         zoom: 3
       });
 
