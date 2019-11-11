@@ -63,11 +63,13 @@ var statePopup = {
       .then(resp => {
         const arr = resp.data.slice(1);
 
-        return arr.map(category => ({
-          estimate: category[0],
-          label: category[1],
-          state: category[2],
-        }))
+        if (arr) {
+          return arr.map(category => ({
+            estimate: category[0],
+            label: category[1],
+            state: category[2],
+          }))
+        }
       });
 
     // use selectedState as a promise (returns all language categories)
@@ -75,72 +77,38 @@ var statePopup = {
       .then(resp => {
         const data = resp.data.slice(1);
 
-        return data
-          .sort((a, b, ) => b[0] - a[0])
-          .slice(0, 6)
-          .map(lang => ({
-            estimate: lang[0],
-            name: lang[1],
-            code: lang[3]
-          }));
+        if (data) {
+          return data
+            .sort((a, b, ) => b[0] - a[0])
+            .slice(0, 6)
+            .map(lang => ({
+              estimate: lang[0],
+              name: lang[1],
+              code: lang[3]
+            }));
+        }
       });
 
-      
-      console.log(await selectedStateLanguages);
-      console.log(await selectedStateCategories); //includes labels 
+    const categories = await selectedStateCategories;
+    const languages = await selectedStateLanguages;
 
-    return [{
-      "type": "fields",
-      "fieldInfos": [
-        {
-          "fieldName": "AGNCY_NAME",
-          "label": "Agency",
-          "isEditable": true,
-          "tooltip": "",
-          "visible": true,
-          "format": null,
-          "stringFieldOption": "text-box"
-        },
-        {
-          "fieldName": "TYPE",
-          "label": "Type",
-          "isEditable": true,
-          "tooltip": "",
-          "visible": true,
-          "format": null,
-          "stringFieldOption": "text-box"
-        },
-        {
-          "fieldName": "ACCESS_TYP",
-          "label": "Access",
-          "isEditable": true,
-          "tooltip": "",
-          "visible": true,
-          "format": null,
-          "stringFieldOption": "text-box"
-        },
-        {
-          "fieldName": "GIS_ACRES",
-          "label": "Acres",
-          "isEditable": true,
-          "tooltip": "",
-          "visible": true,
-          "format": {
-            "places": 2,
-            "digitSeparator": true
-          },
-          "stringFieldOption": "text-box"
-        }
-      ]
-    }];
+    if (categories && languages) {
+      return "<p align='left'><strong>Language Categories</strong> </br>" +
+        categories.map(category => `<strong>${category.label}: </strong> ${category.estimate} </br> `).join("") + "</p>" +
+        "<p align='left'><strong>Top Spoken Languages (excluding English) </strong> </br>" +
+        languages.map(language => `<strong>${language.name}: </strong> ${language.estimate} </br> `).join("") + "</p>"
+    }
+
+
   }
+
 }
 
 
 function ArcMap() {
   const mapRef = useRef();
 
-  useEffect(() => {
+  useEffect(() => { //dafuq are you doing mang??
     // lazy load the required ArcGIS API for JavaScript modules and CSS
 
     loadModules(
