@@ -32,11 +32,12 @@ const ArcMap = () => {
       { css: true }
     ).then(([ArcGISMap, MapView, GeoJSONLayer]) => {
 
-
+      // choosing the map style we want
       const map = new ArcGISMap({
         basemap: 'gray-vector'
       });
 
+      // Creating the geoJson layers
       const generateGeoJSONLayer = (data, render) => {
         return new GeoJSONLayer({
           url: data,
@@ -55,11 +56,13 @@ const ArcMap = () => {
         popupTemplate: statePopup
       });
 
+      // Adding the GeoJson Layer to the map
       map.add(USCongressional);
       map.add(USStates);
       map.add(USCounties);
       map.add(USOutline);
 
+      // On click for putting on and taking out the layers
       document.getElementById('outline').onclick = () => USOutline.visible = !USOutline.visible;
       document.getElementById('states').onclick = () => USStates.visible = !USStates.visible;
       document.getElementById('counties').onclick = () => USCounties.visible = !USCounties.visible;

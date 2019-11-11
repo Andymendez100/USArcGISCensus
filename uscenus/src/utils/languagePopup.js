@@ -1,5 +1,7 @@
+// Packages
 import axios from 'axios';
 
+// Creating the popup whenver someone click a state
 const statePopup = {
 
     "id": "{STATE}",
@@ -28,7 +30,6 @@ const statePopup = {
         const selectedStateLanguages = axios.get(`https://api.census.gov/data/2013/language?get=EST,LANLABEL,NAME&for=state:${STATE}&LAN`)
             .then(resp => {
                 const data = resp.data.slice(1);
-
                 if (data) {
                     return data
                         .sort((a, b, ) => b[0] - a[0])
@@ -40,12 +41,12 @@ const statePopup = {
                         }));
                 }
             });
-
+        // Getting all the promised back so we can display them
         const categories = await selectedStateCategories;
         const languages = await selectedStateLanguages;
 
         if (categories && languages) {
-
+            // Return html to popup to be displayed
             return "<p align='left'><strong>Language Categories</strong> </br>" +
                 categories.map(category => `<strong>${category.label}: </strong> ${category.estimate} </br> `).join("") + "</p>" +
                 "<p align='left'><strong>Top Spoken Languages (excluding English) </strong> </br>" +

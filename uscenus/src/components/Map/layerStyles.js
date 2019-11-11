@@ -1,5 +1,6 @@
+// Styles for each geoJSON layer
 const outlineRenderer = {
-    type: "simple",  // autocasts as new SimpleRenderer()
+    type: "simple",
     size: 3,
     symbol: {
         type: "simple-line",
@@ -8,7 +9,7 @@ const outlineRenderer = {
 }
 
 const stateRenderer = {
-    type: "simple",  // autocasts as new SimpleRenderer()
+    type: "simple",
     size: 4,
     symbol: {
         type: "simple-fill",
@@ -18,7 +19,7 @@ const stateRenderer = {
 }
 
 const countiesRenderer = {
-    type: "simple",  // autocasts as new SimpleRenderer()
+    type: "simple",
     size: 1,
     symbol: {
         type: "simple-line",
@@ -28,7 +29,7 @@ const countiesRenderer = {
 }
 
 const congressionalRenderer = {
-    type: "simple",  // autocasts as new SimpleRenderer()
+    type: "simple",
     size: 4,
     symbol: {
         type: "simple-line",
