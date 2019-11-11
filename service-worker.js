@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/USArcGISCensus/precache-manifest.cb135cdd5562fa461a1fc89edfc473ae.js"
+  "/USArcGISCensus/precache-manifest.869c9df2fa5df4bcc75cab8ad296906f.js"
 );
 
 self.addEventListener('message', (event) => {
