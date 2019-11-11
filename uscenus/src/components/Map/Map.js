@@ -90,6 +90,7 @@ const ArcMap = () => {
   return (
     <div>
       <h2>U.S 2013 Census Map</h2>
+      <p>Click on States to show US Census Langugage Info</p>
       <button id="outline">Toggle US OutLine</button>
       <button id="states">Toggle US States</button>
       <button id="counties">Toggle US Counties</button>
