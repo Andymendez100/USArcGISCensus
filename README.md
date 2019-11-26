@@ -7,7 +7,7 @@ ArcGisMap is a map that used the arcGIS libary, US census data, and react.JS in 
   - Has multiply layers that are toggable
 
 
-
+![ArcGIS](https://user-images.githubusercontent.com/49281765/69590505-9cec3380-0fa4-11ea-8121-71f3fe4578ad.gif)
 ### Tech
 
 ArcGisMap uses a number of open source projects to work properly:
